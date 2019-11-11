@@ -1,0 +1,5 @@
+ReportTemplatePath=./src/main/java/com/Reports/
+TestSuiteResultsPath=./target
+TestResultsLocalPath=./target
+TestCaseCountToChangeResultPath=1
+Environment=QA

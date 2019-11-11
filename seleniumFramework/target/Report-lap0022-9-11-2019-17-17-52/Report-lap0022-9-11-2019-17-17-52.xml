@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+		<TestCaseName id="TC_Login_123" description=" - Verify page Title.">
+			<TestCaseStep>
+			<Child-Steps>Expected title :Google </Child-Steps>
+			<Child-Status>Pass</Child-Status>
+			<Child-ImagePath></Child-ImagePath>
+			<Child-ExecutionTime>94</Child-ExecutionTime>
+			<Child-Remarks>matches with Actual title: Google</Child-Remarks>
+			<StepStatus>Pass</StepStatus>
+	</TestCaseStep>
+	
+
+	</TestCaseName>
+	<TestCaseName id="TC_Login_122" description=" - Verify page Title.">
+			<TestCaseStep>
+			<Child-Steps>Expected title :Google </Child-Steps>
+			<Child-Status>Pass</Child-Status>
+			<Child-ImagePath></Child-ImagePath>
+			<Child-ExecutionTime>27</Child-ExecutionTime>
+			<Child-Remarks>matches with Actual title: Google</Child-Remarks>
+			<StepStatus>Pass</StepStatus>
+	</TestCaseStep>
+	$testCaseStep$
+
+	</TestCaseName>
+
+</company>
