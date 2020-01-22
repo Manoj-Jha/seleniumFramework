@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="0" total="1" passed="1">
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="772" started-at="2019-09-11T13:29:08Z" finished-at="2019-09-11T13:29:09Z">
+  <suite started-at="2020-01-13T15:58:54 IST" name="Default suite" finished-at="2020-01-13T15:59:19 IST" duration-ms="24947">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="772" started-at="2019-09-11T13:29:08Z" finished-at="2019-09-11T13:29:09Z">
+    <test started-at="2020-01-13T15:58:54 IST" name="Default test" finished-at="2020-01-13T15:59:19 IST" duration-ms="24947">
       <class name="com.ExecutionTestNG.SuiteExecutionSetup">
-        <test-method status="PASS" signature="InitializeAutomation()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@6767c1fc]" name="InitializeAutomation" is-config="true" duration-ms="9712" started-at="2019-09-11T18:58:59Z" finished-at="2019-09-11T18:59:08Z">
+        <test-method is-config="true" signature="InitializeAutomation()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@757acd7b]" started-at="2020-01-13T15:58:54 IST" name="InitializeAutomation" finished-at="2020-01-13T15:58:55 IST" duration-ms="1057" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- InitializeAutomation -->
-        <test-method status="PASS" signature="LoginSuite()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@6767c1fc]" name="LoginSuite" duration-ms="44" started-at="2019-09-11T18:59:08Z" finished-at="2019-09-11T18:59:08Z">
+        <test-method signature="LoginSuite()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@757acd7b]" started-at="2020-01-13T15:58:55 IST" name="LoginSuite" finished-at="2020-01-13T15:59:19 IST" duration-ms="23717" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- LoginSuite -->
-        <test-method status="PASS" signature="tearDown()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@6767c1fc]" name="tearDown" is-config="true" duration-ms="710" started-at="2019-09-11T18:59:08Z" finished-at="2019-09-11T18:59:09Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- tearDown -->
-        <test-method status="PASS" signature="createReport()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@6767c1fc]" name="createReport" is-config="true" duration-ms="33" started-at="2019-09-11T18:59:09Z" finished-at="2019-09-11T18:59:09Z">
+        <test-method is-config="true" signature="createReport()[pri:0, instance:com.ExecutionTestNG.SuiteExecutionSetup@757acd7b]" started-at="2020-01-13T15:59:19 IST" name="createReport" finished-at="2020-01-13T15:59:19 IST" duration-ms="92" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- createReport -->

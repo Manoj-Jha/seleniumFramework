@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +25,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import com.Driver.TestSetup;
+
 import com.Reports.Report;
 
 
@@ -33,127 +38,338 @@ public class Actions {
 	 * Purpose: Created Dictionary to set and get local data from the script, where Key and Value as string.
 	 */
 	public static Hashtable<String, String> dict =new Hashtable<String, String>();
+	
+	// Create TestCases Variable dictionary in key-value pair.
+	public static Hashtable<String, String> TcVariabledict =new Hashtable<String, String>();
 
 	/**
 	 * Purpose: Created Dictionary to set and get Environment data from the script, where Key and Value as string.
 	 */
 	public static Hashtable<String, String> envDict= new Hashtable<String,String>();
 	
-	public static List<String> objectProperty=null;
+	//public static List<String> objectProperty1=null;
 	public static Properties config = null;
+	public static String[] objectProperty= new String[3];   //// Store an array returned by ToBy() method.
+	public static String objName="";						// Store testObject object name e.g. SignIn
+	public static String objIdentity="";					// Store testObject object identity e.g. Xpath
+	public static String objProperty="";					// Store testObject object Property e.g. //input[@id='username']
+	public static  By byTestObject=null;						// Store the By data type value returned by method ToBy()
+	public static WebElement element=null;
 	
-	public static String objName="";						// Store Identifier object name e.g. SignIn
-	public static String objIdentity="";					// Store Identifier object identity e.g. Xpath
-	public static String objProperty="";					// Store Identifier object Property e.g. //input[@id='username']
-	public static By byIdentifier=null;						// Store the By data type value returned by method ToBy()
 	
-	
-	
-	public static WebElement GetObject() {
-		
-		WebElement element=null;
-		
+	public static By GetSelectionMethod(String testObject) {
 		try {
-			element=TestSetup.driver.findElement(byIdentifier);
-			
-			System.out.println("\n Printing ObjectName " + element);
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-		return element;
-	}
-	
-	public static By ToBy(String testObject) {
-		try {
-    		objectProperty = BreakObject(testObject);
+    		objectProperty = breakObject(testObject);
     	
     		
-    		String objectName= objectProperty.get(0).toString();
-    		String objectType= objectProperty.get(1).toString();
-    		String objectValue= objectProperty.get(2).toString();
-    				
+    		objName= objectProperty[0].toString();
+    		objIdentity= objectProperty[1].toString();
+    		objProperty= objectProperty[2].toString();
     		
-    	if(objectType.equalsIgnoreCase("id"))
-    			{ return By.id(objectValue); }
-            else if(objectType.equalsIgnoreCase("name"))
-              { return By.name(objectValue); }
-            else if((objectType.equalsIgnoreCase("classname")) || (objectType.equalsIgnoreCase("class")))
-                { return By.className(objectValue); }
-            else if((objectType.equalsIgnoreCase("tagname")) || (objectType.equalsIgnoreCase("tag")))
-                {return By.className(objectValue);}
-            else if((objectType.equalsIgnoreCase("linktext")) || (objectType.equalsIgnoreCase("link")))
-                { return By.linkText(objectValue); }
-            else if(objectType.equalsIgnoreCase("partiallinktext"))
-                { return By.partialLinkText(objectValue); }
-            else if((objectType.equalsIgnoreCase("cssselector")) || (objectType.equalsIgnoreCase("css")))
-                { return By.cssSelector(objectValue); }
-            else if(objectType.equalsIgnoreCase("xpath"))
-                { return By.xpath(objectValue); }
-            else 
-            {
-            	
-            	System.out.println("Invalid Object");
-            //Log.error("Invalid locator");
-            	}
+    		System.out.println("Obj name in By method :" +objName);	
+    		System.out.println("objIdentity in By method :" +objIdentity);	
+    		System.out.println("objProperty in By method :" +objProperty);	
+    	
+    		switch(objIdentity.toLowerCase().trim()) {
+    		
+    		case "xpath":
+				return By.xpath(objProperty);
+    		case "id":
+    			return By.id(objProperty);
+    		case "name":
+    			return By.name(objProperty);
+    		case "cssselector":
+    			return By.cssSelector(objProperty);
+    		case "linktext":
+    			return By.linkText(objProperty);
+    		case "partiallinktext":
+    			return By.partialLinkText(objProperty);
+    		case "tagname":
+    			return By.tagName(objProperty);
+    		case "classname":
+    			return By.className(objProperty);
+    		default:
+    			return null;
+    		   }
+    		
             }
     	catch(WebDriverException ex)
     	{
     		throw ex;
+    		
     	}
     	catch (Exception e) {
     		throw e;
     	}
-    	return null;
 		
 	}
 	
-	public static List<String> BreakObject(String testObject) {
-		
+	public static WebElement GetElement(String testObject) {
 
-		//String username ="username&&xpath&&//input[@id='username']";
-         List<String> list =  new ArrayList<String>();
+		By objBy = GetSelectionMethod(testObject);
+
 		
-		String objectName = null;
-		String objectType = null;
-		String objectValue = null;
-		try {
-			StringTokenizer st = new StringTokenizer(testObject, "&&");
-			while(st.hasMoreTokens()){
-				objectName=st.nextToken().toString();
-				objectType=st.nextToken().toString();
-				objectValue=st.nextToken().toString();
+			try {
+				element = (WebElement) TestSetup.driver.findElement(objBy);
+
+				if(element !=null) {
+					HightlightObject(element);
+					
+					return element;
+				}
+				System.out.println("\"\\n Printing whole WebObject : " + element);
+
+			} catch (Exception e) {
+
+				//element = null;
+				 Report.Remarks("Object Not found", "Fail", "Given object is not found"  +element);
 			}
-			System.out.println(objectName);
-			System.out.println(objectType);
-			System.out.println(objectValue);
-			
-			list.add(objectName);
-			list.add(objectType);
-			list.add(objectValue);
-			
-			System.out.println(list);
-			System.out.println(list.get(0).toString());
-			System.out.println(list.get(1).toString());
-			System.out.println(list.get(2).toString());
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		return null;
 		}
-		return list;
+		
 	
+
+	public static void SwitchToMostRecentBrowser(String OriginalHandle)
+    {
+		String parenthandle=TestSetup.driver.getWindowHandle();
+        for(String handle:TestSetup.driver.getWindowHandles())
+        {
+            if (handle != OriginalHandle)
+            {
+            	TestSetup.driver.switchTo().window(handle);
+                break;
+            }
+
+        }
+    }
+	
+	 public static WebElement GetElementFromFrame(By objBy)
+     {
+		 /* IEnumerable<IWebElement> frames = driver.FindElements(By.TagName("frame"));
+         IEnumerable<IWebElement> iframes = driver.FindElements(By.TagName("iframe"));
+         // IEnumerable<IWebElement> openiframe = driver.FindElements(By.CssSelector("#open_iframe"));
+         IEnumerable<IWebElement> elements = frames.Union(iframes);
+         foreach (IWebElement element in elements)
+         {
+             try
+             {
+                 driver.SwitchTo().Frame(element);
+                 IWebElement foundObject = driver.FindElement(objBy);
+                 return foundObject;
+             }
+             catch
+             {
+                 continue;
+             }
+         } */
+         return null; 
+     }
+	
+	
+	
+	public static String[] breakObject(String testObject) {
+
+		// public static String
+		// username="username=xpath=//input[@id='username']||//input[@name='myusername']";
+		// public static String username="username=xpath=//input[@id='username']";
+		String objectName = null; // username
+		String objectIdentity = null; // xpath
+		String objectProperty = null; //// input[@id='username'] or if user use Pipe:
+										//// //input[@id='username']||//input[@name='myusername']
+
+		String[] objectCollective = new String[3];
+		try {
+			String[] oBjbreak = testObject.split("=", 3);
+
+			// int oBjLength=oBjbreak.length;
+			objectName = oBjbreak[0].toString().trim();
+
+			//System.out.println(objectName);
+			objectIdentity = oBjbreak[1].toString().trim();
+
+			//System.out.println(objectIdentity);
+
+			objectProperty = oBjbreak[2].toString().trim();
+
+			//System.out.println(objectProperty);
+
+			if ((objectName.isEmpty()) || (objectName == null)) {
+				objectName = objectProperty;
+			}
+
+			objectCollective[0] = objectName;
+			objectCollective[1] = objectIdentity;
+			objectCollective[2] = objectProperty;
+
+		} catch (Exception ex) {
+
+			System.out.println(ex);
+
+		}
+		return objectCollective;
 	}
 	
 	
+	public static String breakObject(String testObject, String objectField) {
+
+		// public static String
+		// username="username=xpath=//input[@id='username']||//input[@name='myusername']";
+		// public static String username="username=xpath=//input[@id='username']";
+		String objectName = null; // username
+		String objectIdentity = null; // xpath
+		String objectProperty = null; //// input[@id='username'] or if user use Pipe:
+										//// //input[@id='username']||//input[@name='myusername']
+
+		
+		try {
+			String[] oBjbreak = testObject.split("=", 3);
+
+			// int oBjLength=oBjbreak.length;
+			objectName = oBjbreak[0].toString().trim();
+
+			//System.out.println(objectName);
+			objectIdentity = oBjbreak[1].toString().trim();
+
+			//System.out.println(objectIdentity);
+
+			objectProperty = oBjbreak[2].toString().trim();
+
+		//	System.out.println(objectProperty);
+
+			if ((objectName.isEmpty()) || (objectName == null)) {
+				objectName = objectProperty;
+			}
+             String field=objectField.toLowerCase().trim();
+             
+			switch(field)
+			{
+			case "objectname":
+			     return objName;
+			case "objectproperty":
+			     return objProperty;
+			case "objectidentity":
+			     return objIdentity;
+			default:
+				break;
+			}
+
+		} catch (Exception ex) {
+
+			System.out.println(ex);
+
+		}
+		return "";
+	}
 	
 	
-	/**
-	 * Purpose: Clear the Local variable dictionary.
-	 * @return: Void
+ public static void Click(String testObject)
+		{
+	        String objName=breakObject(testObject, "objectname");
+	        element=GetElement(testObject);
+			int ErrorMessageCount= 0;
+
+			try{
+
+				if (element.equals(objName))
+				{
+					Report.Remarks("Clicked on " + objName, "Fail", "Unable to locate element on page with property: " + testObject + "");
+				}
+				else
+				{
+					element.click();
+				}
+			}
+			catch (NoSuchElementException e ) 
+			{
+				ErrorMessageCount = 1;
+			}
+			catch (Exception ex)
+			{
+				ErrorMessageCount = 1;
+			}
+
+			if (ErrorMessageCount == 0)
+			{
+				Report.Remarks("Clicked on '" + objName + "' object", "Pass", "");
+			} else {
+				Report.Remarks("Clicked on " + objName, "Fail", "Unable to locate element on page with property: " + element + "");
+			}
+
+		}
+ public static void EnterData(String testObject, String data)
+	{
+		
+		String objName=breakObject(testObject, "objectname");
+		element= GetElement(testObject);
+
+		int ErrorMessageCount = 0;
+		try
+		{
+			if (element.equals(objName))
+			{
+				Report.Remarks("Entered data on " + objName, "Fail", "Unable to locate element on page with property: " + testObject + "");
+			}
+			else
+			{
+			//	String Data = Actions.ReplaceTestCaseVariables(data);
+				element.sendKeys(data.trim());
+			}
+		}
+		catch (Exception e ) 
+		{
+			ErrorMessageCount = 1;
+		}
+		if (ErrorMessageCount == 0)
+		{
+			Report.Remarks("Entered text '" + data + "' in '" + objName + "'", "Pass", "");
+		} 
+		else 
+		{
+			Report.Remarks("Unable to locate element on page with property: " + objName + "", "Fail", "Object not found Error");
+			//SetTestCaseVariable("FailedCount","0");
+		}
+		pageSync();
+	}
+ public static void HightlightObject(WebElement element ) {
+	 
+	 for (int i = 0; i <2; i++) 
+     {
+         try {
+             JavascriptExecutor js = (JavascriptExecutor)TestSetup.driver;
+             js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, "color: green; border: #00ff00 solid 3px;");
+             Thread.sleep(50);
+             js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
+             Thread.sleep(50);
+         } catch (InterruptedException e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+         }
+
+     }
+ }
+ 
+ /**
+	 * Purpose: Synchronize the page when switches from one page to another.
+	 * @throws Exception 
 	 */
-	public static void ClearDictionary()
+	public static void pageSync() 
+	{
+		try {	
+			Thread.sleep(1000);		
+		} 
+		catch (Exception ex) {
+
+		}
+
+	}
+	
+/**
+ * Purpose: Clear the Local variable dictionary.
+ * @return: Void
+ * @throws Exception 
+ */
+	public static void ClearDictionary() throws Exception
 
 	{
 		try 
@@ -203,8 +419,9 @@ public class Actions {
 	 * Purpose: Set the Environment variable value or parameter file variables for particular key in a data dictionary
 	 * @param varKey: Key in data dictionary.
 	 * @param varValue: Value for particular key in data dictionary.
+	 * @throws Exception 
 	 */
-	public static void SetEnviornmentVariable(String varKey, String varValue)
+	public static void SetEnviornmentVariable(String varKey, String varValue) throws Exception
 	{
 		try{
 			varKey= varKey.toString().toLowerCase().trim();
@@ -229,6 +446,67 @@ public class Actions {
 		}
 
 	}
+	/*
+	 * Load TestCases variable dictionary text file in key value pair and return the dictionary.
+	 * 
+	 */
+	
+	public static Hashtable<String, String> loadTestCaseVariableFile(String filePath) {
+		
+		try {
+			
+						
+			BufferedReader brReader = new BufferedReader(new FileReader(filePath));
+			String arrKey="";
+			String arrValue="";
+			String strLine=null;
+			while((strLine=brReader.readLine())!=null) {
+				
+				String[] objects=strLine.split("=",2);
+				
+				if(objects.length>=2)
+				{
+					arrKey=objects[0].toString().toLowerCase().trim();
+				   arrValue = objects[1].toString().toLowerCase().trim();
+				   TcVariabledict.put(arrKey,arrValue);
+			} else {
+				System.out.println("ignoring line: " + strLine);
+			}
+				
+			}
+			
+			brReader.close();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		System.out.println(Actions.TcVariabledict.values());
+		return TcVariabledict;
+		}
+		
+	/**
+	 * Purpose: Replace the variable from string if that variable is present in the local dictionary.
+	 * @get parameter from variables key from 'TcVariabledict' and replace all existing key with their values.
+	 * @param txtString: String Text from which text to replace.
+	 * @return: Returns replaced text.
+	 * @throws IOException 
+	 * Variable placed within the text line of Individual field like as ${Username}. 
+	 * The Username get replaced with actual name as "Manoj" both Username and "Manoj" coming from TestcaseVariable.txt file.
+	 */
+	public static String ReplaceTestCaseVariables(String txtString) {
+		String txtToReplace=null;
+		try {
+			StringSubstitutor sub = new StringSubstitutor(TcVariabledict);
+			 txtToReplace = sub.replace(txtString.toLowerCase());
+			System.out.println(txtToReplace);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+        
+        return txtToReplace;
+	}
+	
 	
 	/**
 	 * Purpose: Load Parameters file in data dictionary
@@ -266,6 +544,21 @@ public class Actions {
 		System.out.println(Actions.envDict.values());
 		return envDict;
 	}
+	
+	/**
+	 * Purpose: Replace the variable from string if that variable is present in the local dictionary.
+	 * @param txtString: String Text from which text to replace.
+	 * @return: Returns replaced text.
+	 * @throws IOException
+	 */
+	//public static String ReplaceTestCaseVariables(String txtString) {
+		
+		//String Variablevalue = Actions.GetTestCaseVariable(VarName);
+	//}
+	
+	
+	
+
 	/*
 	 Makes the .properties data file readable
 	 */

@@ -6,6 +6,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.Action.Actions;
@@ -17,13 +18,13 @@ public class SuiteExecutionSetup {
 
 	
 	
-	@BeforeSuite(alwaysRun = true)
+	@BeforeTest(alwaysRun = true)
 	public static void InitializeAutomation() {
 		
 		
 		try{
 			
-			TestSetup.initialize();
+			//TestSetup.openBrowser();
 			
 			if (Actions.getOSName().toLowerCase().indexOf("win") >= 0) 
 			{
@@ -35,7 +36,7 @@ public class SuiteExecutionSetup {
 				Actions.load("src/parameters/GlobalParametersMac");
 			}
 
-			//RE_PreRequisites.SetupEnvironmentFiles();
+			//RE_PreRequisites.SetupEnvironmentFiles(); // SetUp environments file like qa1, qa2,qa3, stage etc. 
 
 			String TempFolderPath = System.getProperty("java.io.tmpdir");
 			
@@ -91,20 +92,25 @@ public class SuiteExecutionSetup {
 	@Test
 	public static void LoginSuite(){
 		
-		TC_Login.TC_Login_123();
+		//TC_Login.TC_Login_1234();
+		TC_Login.TC_Login_2345();
 		
-		TC_Login.TC_Login_122();
+		//TC_Login.TC_Login_123();
+		
+		//TC_Login.TC_Login_122();
 	}
 	
 	
-	@AfterMethod
+	
 	public void tearDown() {
-		TestSetup.closeAllBrowser();
+		//TestSetup.closeAllBrowser();
+		//TestSetup.closeBrowser();
 	}
 	
-	@AfterSuite
+	@AfterTest(alwaysRun =true)
 	public static void createReport()
 	{
+		System.out.println("Report generation started");
 		com.Reports.Report.CreateReportFromXML();
 	}
 }
